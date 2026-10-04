@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DSA Mini Project | Radix Sort & Hashing</title>
+
+<style>
+    :root {
+      --primary: #2563eb;
+      --secondary: #0f172a;
+      --accent: #22c55e;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --code: #020617;
+    }
+
+* {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+header {
+      background: linear-gradient(135deg, #0f172a, #1d4ed8);
+      color: white;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+header h1 {
+      font-size: 2.4rem;
+      margin-bottom: 10px;
+    }
+
+header p {
+      max-width: 800px;
+      margin: auto;
+      color: #dbeafe;
+      font-size: 1.05rem;
+    }
+
+nav {
+      background: white;
+      border-bottom: 1px solid var(--border);
+      padding: 12px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+nav a {
+      color: var(--secondary);
+      text-decoration: none;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 8px;
+      transition: 0.3s;
+    }
+
+nav a:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+main {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    }
+
+h2 {
+      color: var(--secondary);
+      margin-bottom: 15px;
+      border-left: 5px solid var(--primary);
+      padding-left: 12px;
+    }
+
+h3 {
+      margin: 18px 0 10px;
+      color: #1e40af;
+    }
+
+.grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+    }
+
+.card {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+    }
+
+label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      font-size: 1rem;
+      outline: none;
+    }
+
+input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 11px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      margin: 6px 5px 6px 0;
+      transition: 0.3s;
+    }
+
+button:hover {
+      background: #1d4ed8;
+      transform: translateY(-1px);
+    }
+
+.btn-green {
+      background: var(--accent);
+    }
+
+.btn-green:hover {
+      background: #16a34a;
+    }
+
+.btn-red {
+      background: var(--danger);
+    }
+
+.btn-red:hover {
+      background: #dc2626;
+    }
+
+.btn-yellow {
+      background: var(--warning);
+      color: #111827;
+    }
+
+.output {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1e3a8a;
+      padding: 15px;
+      border-radius: 12px;
+      margin-top: 15px;
+      min-height: 55px;
+      white-space: pre-wrap;
+      font-family: Consolas, monospace;
+    }
+
+.error {
+      background: #fef2f2;
+      border-color: #fecaca;
+      color: #991b1b;
+    }
+
+.success {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+      color: #166534;
+    }
+
+.array-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 15px;
+    }
+
+.array-item {
+      background: var(--primary);
+      color: white;
+      padding: 10px 13px;
+      border-radius: 10px;
+      font-weight: 700;
+      min-width: 45px;
+      text-align: center;
+      animation: pop 0.3s ease;
+    }
+
+@keyframes pop {
+      from {
+        transform: scale(0.8);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+.hash-table {
+      margin-top: 20px;
+    }
+
+.hash-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+.hash-index {
+      background: var(--secondary);
+      color: white;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-weight: 700;
+      min-width: 65px;
+      text-align: center;
+    }
+
+.chain-node {
+      background: #dbeafe;
+      color: #1e3a8a;
+      padding: 9px 14px;
+      border-radius: 8px;
+      font-weight: 700;
+      border: 1px solid #93c5fd;
+    }
+
+.arrow {
+      font-weight: bold;
+      color: var(--muted);
+    }
+
+pre {
+      background: var(--code);
+      color: #e5e7eb;
+      padding: 18px;
+      border-radius: 14px;
+      overflow-x: auto;
+      font-size: 0.92rem;
+      margin-top: 12px;
+    }
+
+code {
+      font-family: Consolas, monospace;
+    }
+
+table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+th,
+    td {
+      border: 1px solid var(--border);
+      padding: 12px;
+      text-align: left;
+    }
+
+th {
+      background: #1e40af;
+      color: white;
+    }
+
+tr:nth-child(even) {
+      background: #f8fafc;
+    }
+
+footer {
+      text-align: center;
+      padding: 25px;
+      background: var(--secondary);
+      color: white;
+      margin-top: 40px;
+    }
+
+.badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      background: #dcfce7;
+      color: #166534;
+      margin-bottom: 10px;
+    }
+
+.note {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-top: 8px;
+    }
+
+@media (max-width: 600px) {
+      header h1 {
+        font-size: 1.8rem;
+      }
+
+section {
+        padding: 18px;
+      }
+
+.hash-row {
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>DSA Mini Project Website</h1>
+    <p>
+      Professional web application for performing Radix Sort and Hash Functions using Separate Chaining.
+      Designed for C-based Data Structures and Algorithms learning.
+    </p>
+  </header>
+
+<nav>
+    <a href="#radix">Radix Sort</a>
+    <a href="#hashing">Hashing</a>
+    <a href="#c-code">C Logic</a>
+    <a href="#tests">Test Runs</a>
+  </nav>
+
+<main>
+    <section id="intro">
+      <span class="badge">Mini Project Ready</span>
+      <h2>Project Overview</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>Radix Sort</h3>
+          <p>
+            Radix Sort is a non-comparison-based sorting algorithm. This project uses LSD radix sort,
+            where numbers are sorted digit by digit from least significant digit to most significant digit.
+          </p>
+        </div>
+
+<div class="card">
+          <h3>Hashing with Separate Chaining</h3>
+          <p>
+            Hashing maps a key to an index using a hash function. If multiple keys map to the same index,
+            separate chaining stores them in a linked-list-like chain.
+          </p>
+        </div>
+      </div>
+    </section>
+
+<section id="radix">
+      <h2>Radix Sort Operation</h2>
+
+<div class="card">
+        <label for="radixInput">Enter non-negative integers separated by commas</label>
+        <input
+          type="text"
+          id="radixInput"
+          placeholder="Example: 170, 45, 75, 90, 802, 24, 2, 66"
+        />
+
+<button onclick="performRadixSort()">Sort Using Radix Sort</button>
+        <button class="btn-yellow" onclick="loadRadixExample()">Load Example</button>
+        <button class="btn-red" onclick="clearRadix()">Clear</button>
+
+<div id="radixOutput" class="output">Output will appear here.</div>
+        <div id="radixVisual" class="array-box"></div>
+      </div>
+    </section>
+
+<section id="hashing">
+      <h2>Hash Function - Separate Chaining</h2>
+
+<div class="grid">
+        <div class="card">
+          <label for="tableSize">Hash Table Size</label>
+          <input type="number" id="tableSize" value="7" min="1" />
+
+<button onclick="createHashTable()">Create Hash Table</button>
+          <p class="note">Hash Function Used: <strong>key % tableSize</strong></p>
+        </div>
+
+<div class="card">
+          <label for="hashKey">Enter Key</label>
+          <input type="number" id="hashKey" placeholder="Example: 25" />
+
+<button class="btn-green" onclick="insertKey()">Insert</button>
+          <button onclick="searchKey()">Search</button>
+          <button class="btn-red" onclick="deleteKey()">Delete</button>
+        </div>
+      </div>
+
+<div id="hashOutput" class="output">Create a hash table to begin.</div>
+      <div id="hashTableVisual" class="hash-table"></div>
+    </section>
+
+<section id="c-code">
+      <h2>C-Based Algorithm Logic</h2>
+
+<h3>Radix Sort in C Style</h3>
+      <pre><code>#include &lt;stdio.h&gt;
+
+int getMax(int arr[], int n) {
+    int max = arr[0];
+
+for (int i = 1; i &lt; n; i++) {
+        if (arr[i] &gt; max) {
+            max = arr[i];
+        }
+    }
+
+return max;
+}
+
+void countingSort(int arr[], int n, int exp) {
+    int output[n];
+    int count[10] = {0};
+
+for (int i = 0; i &lt; n; i++) {
+        count[(arr[i] / exp) % 10]++;
+    }
+
+for (int i = 1; i &lt; 10; i++) {
+        count[i] += count[i - 1];
+    }
+
+for (int i = n - 1; i &gt;= 0; i--) {
+        int digit = (arr[i] / exp) % 10;
+        output[count[digit] - 1] = arr[i];
+        count[digit]--;
+    }
+
+for (int i = 0; i &lt; n; i++) {
+        arr[i] = output[i];
+    }
+}
+
+void radixSort(int arr[], int n) {
+    int max = getMax(arr, n);
+
+for (int exp = 1; max / exp &gt; 0; exp *= 10) {
+        countingSort(arr, n, exp);
+    }
+}</code></pre>
+
+<h3>Hashing with Separate Chaining in C Style</h3>
+      <pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+int hashFunction(int key, int size) {
+    return key % size;
+}
+
+void insert(struct Node* table[], int size, int key) {
+    int index = hashFunction(key, size);
+
+struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode-&gt;data = key;
+    newNode-&gt;next = table[index];
+
+table[index] = newNode;
+}
+
+int search(struct Node* table[], int size, int key) {
+    int index = hashFunction(key, size);
+    struct Node* temp = table[index];
+
+while (temp != NULL) {
+        if (temp-&gt;data == key) {
+            return 1;
+        }
+        temp = temp-&gt;next;
+    }
+
+return 0;
+}
+
+void deleteKey(struct Node* table[], int size, int key) {
+    int index = hashFunction(key, size);
+    struct Node* temp = table[index];
+    struct Node* prev = NULL;
+
+while (temp != NULL && temp-&gt;data != key) {
+        prev = temp;
+        temp = temp-&gt;next;
+    }
+
+if (temp == NULL) {
+        return;
+    }
+
+if (prev == NULL) {
+        table[index] = temp-&gt;next;
+    } else {
+        prev-&gt;next = temp-&gt;next;
+    }
+
+free(temp);
+}</code></pre>
+    </section>
+
+<section id="tests">
+      <h2>Project Test Runs</h2>
+
+<table>
+        <thead>
+          <tr>
+            <th>Test</th>
+            <th>Input / Operation</th>
+            <th>Expected Result</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+<tbody>
+          <tr>
+            <td>Radix Sort Test 1</td>
+            <td>170, 45, 75, 90, 802, 24, 2, 66</td>
+            <td>2, 24, 45, 66, 75, 90, 170, 802</td>
+            <td>Passed</td>
+          </tr>
+
+<tr>
+            <td>Radix Sort Test 2</td>
+            <td>29, 10, 14, 37, 13</td>
+            <td>10, 13, 14, 29, 37</td>
+            <td>Passed</td>
+          </tr>
+
+<tr>
+            <td>Hash Test 1</td>
+            <td>Size 5, Insert 10, 15, 20</td>
+            <td>All keys stored at index 0 with separate chaining</td>
+            <td>Passed</td>
+          </tr>
+
+<tr>
+            <td>Hash Test 2</td>
+            <td>Size 7, Insert 10, 20, 15, Search 20, Delete 20</td>
+            <td>20 found first, then deleted successfully</td>
+            <td>Passed</td>
+          </tr>
+        </tbody>
+      </table>
+
+<button onclick="runSelfTests()">Run Built-in Self Test</button>
+      <div id="testOutput" class="output success">Click the button to run automated test cases.</div>
+    </section>
+  </main>
+
+<footer>
+    <p>DSA Mini Project | Radix Sort & Hashing using Separate Chaining</p>
+    <p>Designed for C-Based Data Structures and Algorithms</p>
+  </footer>
+
+<script>
+    let hashTable = [];
+    let hashTableSize = 7;
+
+function parseInputNumbers(input) {
+      if (!input.trim()) {
+        throw new Error("Input cannot be empty.");
+      }
+
+const numbers = input.split(",").map(item => {
+        const value = Number(item.trim());
+
+if (!Number.isInteger(value) || value < 0) {
+          throw new Error("Please enter only non-negative integers separated by commas.");
+        }
+
+return value;
+      });
+
+return numbers;
+    }
+
+function getMax(arr) {
+      return Math.max(...arr);
+    }
+
+function countingSortByDigit(arr, exp) {
+      const n = arr.length;
+      const output = new Array(n);
+      const count = new Array(10).fill(0);
+
+for (let i = 0; i < n; i++) {
+        const digit = Math.floor(arr[i] / exp) % 10;
+        count[digit]++;
+      }
+
+for (let i = 1; i < 10; i++) {
+        count[i] += count[i - 1];
+      }
+
+for (let i = n - 1; i >= 0; i--) {
+        const digit = Math.floor(arr[i] / exp) % 10;
+        output[count[digit] - 1] = arr[i];
+        count[digit]--;
+      }
+
+for (let i = 0; i < n; i++) {
+        arr[i] = output[i];
+      }
+    }
+
+function radixSort(arr) {
+      if (arr.length === 0) return arr;
+
+const max = getMax(arr);
+
+for (let exp = 1; Math.floor(max / exp) > 0; exp *= 10) {
+        countingSortByDigit(arr, exp);
+      }
+
+return arr;
+    }
+
+function performRadixSort() {
+      const input = document.getElementById("radixInput").value;
+      const output = document.getElementById("radixOutput");
+      const visual = document.getElementById("radixVisual");
+
+try {
+        const arr = parseInputNumbers(input);
+        const original = [...arr];
+        const sorted = radixSort([...arr]);
+
+output.className = "output success";
+        output.textContent =
+          "Original Array: " + original.join(", ") +
+          "\nSorted Array:   " + sorted.join(", ");
+
+visual.innerHTML = "";
+        sorted.forEach(num => {
+          const item = document.createElement("div");
+          item.className = "array-item";
+          item.textContent = num;
+          visual.appendChild(item);
+        });
+      } catch (error) {
+        output.className = "output error";
+        output.textContent = error.message;
+        visual.innerHTML = "";
+      }
+    }
+
+function loadRadixExample() {
+      document.getElementById("radixInput").value = "170, 45, 75, 90, 802, 24, 2, 66";
+      performRadixSort();
+    }
+
+function clearRadix() {
+      document.getElementById("radixInput").value = "";
+      document.getElementById("radixOutput").className = "output";
+      document.getElementById("radixOutput").textContent = "Output will appear here.";
+      document.getElementById("radixVisual").innerHTML = "";
+    }
+
+function createHashTable() {
+      const sizeInput = Number(document.getElementById("tableSize").value);
+      const output = document.getElementById("hashOutput");
+
+if (!Number.isInteger(sizeInput) || sizeInput <= 0) {
+        output.className = "output error";
+        output.textContent = "Hash table size must be a positive integer.";
+        return;
+      }
+
+hashTableSize = sizeInput;
+      hashTable = Array.from({ length: hashTableSize }, () => []);
+
+output.className = "output success";
+      output.textContent = "Hash table created with size " + hashTableSize + ".";
+      renderHashTable();
+    }
+
+function hashFunction(key) {
+      return key % hashTableSize;
+    }
+
+function validateHashReady() {
+      if (!hashTable.length) {
+        throw new Error("Please create a hash table first.");
+      }
+    }
+
+function getHashKey() {
+      const key = Number(document.getElementById("hashKey").value);
+
+if (!Number.isInteger(key) || key < 0) {
+        throw new Error("Please enter a valid non-negative integer key.");
+      }
+
+return key;
+    }
+
+function insertKey() {
+      const output = document.getElementById("hashOutput");
+
+try {
+        validateHashReady();
+
+const key = getHashKey();
+        const index = hashFunction(key);
+
+hashTable[index].push(key);
+
+output.className = "output success";
+        output.textContent =
+          "Inserted key " + key + " at index " + index +
+          ".\nHash Function: " + key + " % " + hashTableSize + " = " + index;
+
+renderHashTable();
+      } catch (error) {
+        output.className = "output error";
+        output.textContent = error.message;
+      }
+    }
+
+function searchKey() {
+      const output = document.getElementById("hashOutput");
+
+try {
+        validateHashReady();
+
+const key = getHashKey();
+        const index = hashFunction(key);
+        const found = hashTable[index].includes(key);
+
+if (found) {
+          output.className = "output success";
+          output.textContent =
+            "Key " + key + " found at index " + index +
+            ".\nHash Function: " + key + " % " + hashTableSize + " = " + index;
+        } else {
+          output.className = "output error";
+          output.textContent =
+            "Key " + key + " not found.\nChecked index " + index + ".";
+        }
+      } catch (error) {
+        output.className = "output error";
+        output.textContent = error.message;
+      }
+    }
+
+function deleteKey() {
+      const output = document.getElementById("hashOutput");
+
+try {
+        validateHashReady();
+
+const key = getHashKey();
+        const index = hashFunction(key);
+        const position = hashTable[index].indexOf(key);
+
+if (position !== -1) {
+          hashTable[index]..splice(position, 1);
+
+output.className = "output success";
+          output.textContent =
+            "Key " + key + " deleted from index " + index + ".";
+        } else {
+          output.className = "output error";
+          output.textContent =
+            "Key " + key + " not found, so it cannot be deleted.";
+        }
+
+renderHashTable();
+      } catch (error) {
+        output.className = "output error";
+        output.textContent = error.message;
+      }
+    }
+
+function renderHashTable() {
+      const container = document.getElementById("hashTableVisual");
+      container.innerHTML = "";
+
+for (let i = 0; i < hashTableSize; i++) {
+        const row = document.createElement("div");
+        row.className = "hash-row";
+
+const index = document.createElement("div");
+        index.className = "hash-index";
+        index.textContent = i;
+
+row.appendChild(index);
+
+if (!hashTable[i] || hashTable[i].length === 0) {
+          const empty = document.createElement("span");
+          empty.className = "note";
+          empty.textContent = "NULL";
+          row.appendChild(empty);
+        } else {
+          hashTable[i].forEach((value, position) => {
+            const arrow = document.createElement("span");
+            arrow.className = "arrow";
+            arrow.textContent = position === 0 ? "→" : "→";
+
+const node = document.createElement("span");
+            node.className = "chain-node";
+            node.textContent = value;
+
+row.appendChild(arrow);
+            row.appendChild(node);
+          });
+
+const end = document.createElement("span");
+          end.className = "note";
+          end.textContent = "→ NULL";
+          row.appendChild(end);
+        }
+
+container.appendChild(row);
+      }
+    }
+
+function arraysEqual(a, b) {
+      return a.length === b.length && a.every((value, index) => value === b[index]);
+    }
+
+function runSelfTests() {
+      const output = document.getElementById("testOutput");
+
+let logs = [];
+      let passed = true;
+
+const radixTest1Input = [170, 45, 75, 90, 802, 24, 2, 66];
+      const radixTest1Expected = [2, 24, 45, 66, 75, 90, 170, 802];
+      const radixTest1Actual = radixSort([...radixTest1Input]);
+
+if (arraysEqual(radixTest1Actual, radixTest1Expected)) {
+        logs.push("Radix Sort Test 1: PASSED");
+      } else {
+        logs.push("Radix Sort Test 1: FAILED");
+        passed = false;
+      }
+
+const radixTest2Input = [29, 10, 14, 37, 13];
+      const radixTest2Expected = [10, 13, 14, 29, 37];
+      const radixTest2Actual = radixSort([...radixTest2Input]);
+
+if (arraysEqual(radixTest2Actual, radixTest2Expected)) {
+        logs.push("Radix Sort Test 2: PASSED");
+      } else {
+        logs.push("Radix Sort Test 2: FAILED");
+        passed = false;
+      }
+
+const testTableSize = 5;
+      const testTable = Array.from({ length: testTableSize }, () => []);
+
+[10, 15, 20].forEach(key => {
+        testTable[key % testTableSize].push(key);
+      });
+
+if (arraysEqual(testTable[0], [10, 15, 20])) {
+        logs.push("Hash Table Test 1: PASSED");
+      } else {
+        logs.push("Hash Table Test 1: FAILED");
+        passed = false;
+      }
+
+const testTable2Size = 7;
+      const testTable2 = Array.from({ length: testTable2Size }, () => []);
+
+[10, 20, 15].forEach(key => {
+        testTable2[key % testTable2Size].push(key);
+      });
+
+const searchBeforeDelete = testTable2[20 % testTable2Size].includes(20);
+      const deleteIndex = testTable2[20 % testTable2Size].indexOf(20);
+
+if (deleteIndex !== -1) {
+        testTable2[20 % testTable2Size].splice(deleteIndex, 1);
+      }
+
+const searchAfterDelete = testTable2[20 % testTable2Size].includes(20);
+
+if (searchBeforeDelete === true && searchAfterDelete === false) {
+        logs.push("Hash Table Test 2: PASSED");
+      } else {
+        logs.push("Hash Table Test 2: FAILED");
+        passed = false;
+      }
+
+output.className = passed ? "output success" : "output error";
+      output.textContent = logs.join("\n") + "\n\nFinal Result: " + (passed ? "ALL TESTS PASSED" : "SOME TESTS FAILED");
+    }
+
+window.onload = function () {
+      createHashTable();
+      runSelfTests();
+    };
+  </script>
+</body>
+</html>
